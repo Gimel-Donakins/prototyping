@@ -1,0 +1,436 @@
+{
+  "workbenches": [
+    {
+      "id": 1,
+      "inUse": false,
+      "inventory": {
+        "Multimeter": {
+          "count": 1
+        },
+        "Wire Stripper": {
+          "count": 1
+        },
+        "Needle-Nose Pliers": {
+          "count": 1
+        },
+        "Diagonal Cutters": {
+          "count": 1
+        },
+        "Screwdriver (Flathead)": {
+          "count": 1
+        },
+        "Screwdriver (Phillips)": {
+          "count": 1
+        },
+        "Breadboard": {
+          "count": 1
+        },
+        "Jumper Wires": {
+          "count": 1
+        },
+        "Soldering Iron": {
+          "count": 1
+        },
+        "Helping Hands": {
+          "count": 1
+        }
+      }
+    },
+    {
+      "id": 2,
+      "inUse": false,
+      "inventory": {
+        "Multimeter": {
+          "count": 1
+        },
+        "Wire Stripper": {
+          "count": 1
+        },
+        "Needle-Nose Pliers": {
+          "count": 1
+        },
+        "Diagonal Cutters": {
+          "count": 1
+        },
+        "Screwdriver (Flathead)": {
+          "count": 1
+        },
+        "Screwdriver (Phillips)": {
+          "count": 1
+        },
+        "Breadboard": {
+          "count": 1
+        },
+        "Jumper Wires": {
+          "count": 1
+        },
+        "Soldering Iron": {
+          "count": 1
+        },
+        "Helping Hands": {
+          "count": 1
+        }
+      }
+    },
+    {
+      "id": 3,
+      "inUse": false,
+      "inventory": {
+        "Multimeter": {
+          "count": 1
+        },
+        "Wire Stripper": {
+          "count": 1
+        },
+        "Needle-Nose Pliers": {
+          "count": 1
+        },
+        "Diagonal Cutters": {
+          "count": 1
+        },
+        "Screwdriver (Flathead)": {
+          "count": 1
+        },
+        "Screwdriver (Phillips)": {
+          "count": 1
+        },
+        "Breadboard": {
+          "count": 1
+        },
+        "Jumper Wires": {
+          "count": 1
+        },
+        "Soldering Iron": {
+          "count": 1
+        },
+        "Helping Hands": {
+          "count": 1
+        }
+      }
+    },
+    {
+      "id": 4,
+      "inUse": false,
+      "inventory": {
+        "Multimeter": {
+          "count": 1
+        },
+        "Wire Stripper": {
+          "count": 1
+        },
+        "Needle-Nose Pliers": {
+          "count": 1
+        },
+        "Diagonal Cutters": {
+          "count": 1
+        },
+        "Screwdriver (Flathead)": {
+          "count": 1
+        },
+        "Screwdriver (Phillips)": {
+          "count": 1
+        },
+        "Breadboard": {
+          "count": 1
+        },
+        "Jumper Wires": {
+          "count": 1
+        },
+        "Soldering Iron": {
+          "count": 1
+        },
+        "Helping Hands": {
+          "count": 1
+        }
+      }
+    },
+    {
+      "id": 5,
+      "inUse": true,
+      "inventory": {
+        "Multimeter": {
+          "count": 1
+        },
+        "Wire Stripper": {
+          "count": 1
+        },
+        "Needle-Nose Pliers": {
+          "count": 1
+        },
+        "Diagonal Cutters": {
+          "count": 1
+        },
+        "Screwdriver (Flathead)": {
+          "count": 1
+        },
+        "Screwdriver (Phillips)": {
+          "count": 1
+        },
+        "Breadboard": {
+          "count": 1
+        },
+        "Jumper Wires": {
+          "count": 1
+        },
+        "Soldering Iron": {
+          "count": 1
+        },
+        "Helping Hands": {
+          "count": 1
+        }
+      }
+    },
+    {
+      "id": 6,
+      "inUse": false,
+      "inventory": {
+        "Multimeter": {
+          "count": 1
+        },
+        "Wire Stripper": {
+          "count": 1
+        },
+        "Needle-Nose Pliers": {
+          "count": 1
+        },
+        "Diagonal Cutters": {
+          "count": 1
+        },
+        "Screwdriver (Flathead)": {
+          "count": 1
+        },
+        "Screwdriver (Phillips)": {
+          "count": 1
+        },
+        "Breadboard": {
+          "count": 1
+        },
+        "Jumper Wires": {
+          "count": 1
+        },
+        "Soldering Iron": {
+          "count": 1
+        },
+        "Helping Hands": {
+          "count": 1
+        }
+      }
+    },
+    {
+      "id": 7,
+      "inUse": false,
+      "inventory": {
+        "Multimeter": {
+          "count": 1
+        },
+        "Wire Stripper": {
+          "count": 1
+        },
+        "Needle-Nose Pliers": {
+          "count": 1
+        },
+        "Diagonal Cutters": {
+          "count": 1
+        },
+        "Screwdriver (Flathead)": {
+          "count": 1
+        },
+        "Screwdriver (Phillips)": {
+          "count": 1
+        },
+        "Breadboard": {
+          "count": 1
+        },
+        "Jumper Wires": {
+          "count": 1
+        },
+        "Soldering Iron": {
+          "count": 1
+        },
+        "Helping Hands": {
+          "count": 1
+        }
+      }
+    },
+    {
+      "id": 8,
+      "inUse": false,
+      "inventory": {
+        "Multimeter": {
+          "count": 1
+        },
+        "Wire Stripper": {
+          "count": 1
+        },
+        "Needle-Nose Pliers": {
+          "count": 1
+        },
+        "Diagonal Cutters": {
+          "count": 1
+        },
+        "Screwdriver (Flathead)": {
+          "count": 1
+        },
+        "Screwdriver (Phillips)": {
+          "count": 1
+        },
+        "Breadboard": {
+          "count": 1
+        },
+        "Jumper Wires": {
+          "count": 1
+        },
+        "Soldering Iron": {
+          "count": 1
+        },
+        "Helping Hands": {
+          "count": 1
+        }
+      }
+    },
+    {
+      "id": 9,
+      "inUse": false,
+      "inventory": {
+        "Multimeter": {
+          "count": 1
+        },
+        "Wire Stripper": {
+          "count": 1
+        },
+        "Needle-Nose Pliers": {
+          "count": 1
+        },
+        "Diagonal Cutters": {
+          "count": 1
+        },
+        "Screwdriver (Flathead)": {
+          "count": 1
+        },
+        "Screwdriver (Phillips)": {
+          "count": 0
+        },
+        "Breadboard": {
+          "count": 1
+        },
+        "Jumper Wires": {
+          "count": 1
+        },
+        "Soldering Iron": {
+          "count": 1
+        },
+        "Helping Hands": {
+          "count": 1
+        }
+      }
+    },
+    {
+      "id": 10,
+      "inUse": false,
+      "inventory": {
+        "Multimeter": {
+          "count": 1
+        },
+        "Wire Stripper": {
+          "count": 1
+        },
+        "Needle-Nose Pliers": {
+          "count": 1
+        },
+        "Diagonal Cutters": {
+          "count": 0
+        },
+        "Screwdriver (Flathead)": {
+          "count": 0
+        },
+        "Screwdriver (Phillips)": {
+          "count": 0
+        },
+        "Breadboard": {
+          "count": 1
+        },
+        "Jumper Wires": {
+          "count": 0
+        },
+        "Soldering Iron": {
+          "count": 1
+        },
+        "Helping Hands": {
+          "count": 0
+        }
+      }
+    },
+    {
+      "id": 11,
+      "inUse": false,
+      "inventory": {
+        "Multimeter": {
+          "count": 1
+        },
+        "Wire Stripper": {
+          "count": 1
+        },
+        "Needle-Nose Pliers": {
+          "count": 1
+        },
+        "Diagonal Cutters": {
+          "count": 0
+        },
+        "Screwdriver (Flathead)": {
+          "count": 0
+        },
+        "Screwdriver (Phillips)": {
+          "count": 0
+        },
+        "Breadboard": {
+          "count": 1
+        },
+        "Jumper Wires": {
+          "count": 0
+        },
+        "Soldering Iron": {
+          "count": 1
+        },
+        "Helping Hands": {
+          "count": 0
+        }
+      }
+    },
+    {
+      "id": 12,
+      "inUse": false,
+      "inventory": {
+        "Multimeter": {
+          "count": 0
+        },
+        "Wire Stripper": {
+          "count": 1
+        },
+        "Needle-Nose Pliers": {
+          "count": 1
+        },
+        "Diagonal Cutters": {
+          "count": 1
+        },
+        "Screwdriver (Flathead)": {
+          "count": 0
+        },
+        "Screwdriver (Phillips)": {
+          "count": 0
+        },
+        "Breadboard": {
+          "count": 1
+        },
+        "Jumper Wires": {
+          "count": 0
+        },
+        "Soldering Iron": {
+          "count": 1
+        },
+        "Helping Hands": {
+          "count": 0
+        }
+      }
+    }
+  ]
+}
