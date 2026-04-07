@@ -54,7 +54,8 @@ function el(tag, styles = {}, attrs = {}) {
 
 // ─── App state ────────────────────────────────────────────────────────────────
 let workbenches = [];
-let currentView = 'dashboard'; // 'dashboard' | 'search' | 'cleanup' | 'log'
+let currentView = localStorage.getItem('frith_currentView') || 'dashboard';
+let previousView = null; // for toggling Movement Log back
 let searchState  = { step: 0, query: '', results: [], chosen: null };
 let cleanupState = { step: 0, moves: [], checkedMoves: new Set() };
 let expandedBenches = new Set();
@@ -84,6 +85,9 @@ async function loadLog() {
 // ─── Root render ──────────────────────────────────────────────────────────────
 function render() {
   const app = document.getElementById('app');
+  // Issue 1: Preserve scroll position across re-renders
+  const oldMain = app.querySelector('main');
+  const savedScroll = oldMain ? oldMain.scrollTop : 0;
   app.innerHTML = '';
   s(app, { display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden' });
 
@@ -100,6 +104,9 @@ function render() {
   else if (currentView === 'search')  renderSearch(content);
   else if (currentView === 'cleanup') renderCleanup(content);
   else if (currentView === 'log')     renderLog(content);
+
+  // Issue 1: Restore scroll position
+  requestAnimationFrame(() => { content.scrollTop = savedScroll; });
 }
 
 // ─── Toolbar — minimal one-line bar ───────────────────────────────────────────
@@ -145,7 +152,6 @@ function buildRibbon() {
     { id: 'dashboard', label: 'Workbench Overview',  sub: 'View tool status for all benches' },
     { id: 'search',    label: 'Find a Tool',          sub: 'Locate a tool across the lab'    },
     { id: 'cleanup',   label: 'Cleanup Routine',       sub: 'Step-by-step lab organization'  },
-    { id: 'log',       label: 'Movement Log',          sub: 'History of all tool movements'  },
   ];
 
   tabs.forEach(tab => {
@@ -178,7 +184,9 @@ function buildRibbon() {
 
     btn.addEventListener('click', () => {
       if (currentView !== tab.id) {
+        previousView = currentView;
         currentView = tab.id;
+        localStorage.setItem('frith_currentView', currentView);
         if (tab.id === 'search')  searchState = { step: 0, query: '', results: [], chosen: null };
         if (tab.id === 'cleanup') cleanupState = { step: 0, moves: [], checkedMoves: new Set() };
         if (tab.id === 'log')     loadLog().then(render);
@@ -228,6 +236,43 @@ function buildRibbon() {
     render();
   });
   ribbon.appendChild(refreshBtn);
+
+  // Issue 5: Movement Log as small icon button instead of a tab
+  const logBtn = el('button', {
+    alignSelf: 'center',
+    width: '32.5px', height: '32.5px', borderRadius: '6px',
+    border: currentView === 'log' ? '2px solid ' + C.accent : '1px solid ' + C.border,
+    background: currentView === 'log' ? C.accentLight : C.surface,
+    padding: '4px',
+    display: 'flex', alignItems: 'center', justifyContent: 'center',
+    marginLeft: '8px',
+    cursor: 'pointer',
+  });
+  logBtn.setAttribute('title', 'Movement Log');
+  const logImg = el('img', {
+    width: '22px', height: '22px', objectFit: 'contain',
+  });
+  logImg.setAttribute('src', 'movement-log.png');
+  logImg.setAttribute('alt', 'Movement Log');
+  logBtn.appendChild(logImg);
+  logBtn.addEventListener('click', () => {
+    if (currentView === 'log') {
+      // Toggle back to the previous tab
+      currentView = previousView || 'dashboard';
+      previousView = null;
+      localStorage.setItem('frith_currentView', currentView);
+      render();
+    } else {
+      previousView = currentView;
+      currentView = 'log';
+      localStorage.setItem('frith_currentView', currentView);
+      loadLog().then(render);
+      render();
+    }
+  });
+  logBtn.addEventListener('mouseenter', () => s(logBtn, { opacity: '0.82' }));
+  logBtn.addEventListener('mouseleave', () => s(logBtn, { opacity: '1' }));
+  ribbon.appendChild(logBtn);
 
   return ribbon;
 }
@@ -437,12 +482,25 @@ function buildExpandedPanel(wb) {
     const hasIssue  = isMissing || info.count > 1;
     const suffix    = isMissing ? ' \u2014 missing' : info.count > 1 ? ' \u00d7' + info.count : '';
 
-    // Col 1: tool name
-    panel.appendChild(el('span', {
+    // Col 1: tool name (Issue 4: keep name + status on one line for clarity)
+    const toolNameCell = el('div', {
+      padding: '3px 0', display: 'flex', alignItems: 'center', gap: '6px',
+      whiteSpace: 'nowrap', overflow: 'hidden',
+    });
+    toolNameCell.appendChild(el('span', {
       fontSize: '13px', fontWeight: hasIssue ? '700' : '400',
-      color:     hasIssue ? C.danger : C.text,
-      padding:   '3px 0', display: 'block',
-    }, { text: tool + suffix }));
+      color: hasIssue ? C.danger : C.text,
+    }, { text: tool }));
+    if (suffix) {
+      toolNameCell.appendChild(el('span', {
+        fontSize: '11px', fontWeight: '700',
+        color: C.danger,
+        padding: '1px 6px', borderRadius: '4px',
+        background: C.danger + '14',
+        flexShrink: '0',
+      }, { text: suffix.replace(' \u2014 ', '').replace(' ', '') }));
+    }
+    panel.appendChild(toolNameCell);
 
     // Col 2: if this bench is missing the tool, show benches that have duplicates (count > 1)
     let dupText = '';
@@ -599,8 +657,8 @@ function buildStepBar(steps, current) {
 }
 
 function renderSearchStep0(panel) {
-  sectionTitle(panel, 'Step 1 — Initial Search');
-  sectionDesc(panel, 'Enter the tool name, then physically check your current workbench before continuing.');
+  sectionTitle(panel, 'Enter Tool Name');
+  sectionDesc(panel, '(or select from list below)');
 
   const row = el('div', { display: 'flex', gap: '10px', marginTop: '18px' });
   const input = el('input', {
@@ -608,7 +666,7 @@ function renderSearchStep0(panel) {
     background: C.surface, border: '1px solid ' + C.border,
     color: C.text, fontSize: '14px',
   });
-  input.setAttribute('placeholder', 'e.g. Multimeter');
+  input.setAttribute('placeholder', 'e.g. AA Battery-Controlled Telescopic Knife');
   input.setAttribute('type', 'text');
   input.setAttribute('spellcheck', 'true');
   input.value = searchState.query;
@@ -632,7 +690,7 @@ function renderSearchStep0(panel) {
   row.appendChild(mkBtn('Checked — go to Dashboard \u2192', C.accent, '#fff', goNext));
   panel.appendChild(row);
   panel.appendChild(el('p', { fontSize: '12px', color: C.textMuted, marginTop: '10px' },
-    { text: '1.1  Visually scan the current workbench drawer before proceeding.' }));
+    { text: 'If your drawer is missing the tool you seek, please proceed.' }));
 
   // Tool list below search — alphabetically sorted, filters as user types
   const toolListWrap = el('div', { marginTop: '20px' });
@@ -679,9 +737,19 @@ function renderToolList(container, query) {
       padding: '7px 14px',
       background: i % 2 === 0 ? C.surface : C.surfaceAlt,
       borderBottom: '1px solid ' + C.border,
+      cursor: 'pointer',
     });
     row.appendChild(el('span', { fontSize: '13px', color: C.text }, { text: name }));
     row.appendChild(el('span', { fontSize: '13px', color: qty > 0 ? C.text : C.danger, fontWeight: qty === 0 ? '700' : '400', textAlign: 'right' }, { text: String(qty) }));
+    // Issue 3: Double-click to autofill/select the tool
+    row.addEventListener('dblclick', () => {
+      searchState.query = name;
+      searchState.step = 1;
+      buildSearchResults();
+      render();
+    });
+    row.addEventListener('mouseenter', () => s(row, { background: C.accentLight }));
+    row.addEventListener('mouseleave', () => s(row, { background: i % 2 === 0 ? C.surface : C.surfaceAlt }));
     container.appendChild(row);
   });
 }
@@ -696,8 +764,8 @@ function buildSearchResults() {
 }
 
 function renderSearchStep1(panel) {
-  sectionTitle(panel, 'Step 2 — Dashboard Verification');
-  sectionDesc(panel, 'Showing all benches that contain "' + searchState.query + '".');
+  sectionTitle(panel, 'Results for "' + searchState.query + '"');
+  sectionDesc(panel, 'Showing all benches that contain "' + searchState.query + '."');
 
   if (searchState.results.length === 0) {
     panel.appendChild(infoBox('No benches have "' + searchState.query + '" in their inventory.', C.danger));
@@ -735,18 +803,19 @@ function renderSearchStep1(panel) {
     info.appendChild(tagRow);
     row.appendChild(info);
     if (avail) {
-      row.appendChild(mkBtn('Take from Bench', C.accent, '#fff', async () => {
-        searchState.chosen = r;
-        // Move tool: decrement source bench by 1, increment user's bench if set
-        if (myWorkstation) {
+      if (!myWorkstation) {
+        row.appendChild(el('span', { fontSize: '11px', color: C.textMuted, fontStyle: 'italic' }, { text: 'Select My Bench first' }));
+      } else if (r.wb.id === myWorkstation) {
+        row.appendChild(el('span', { fontSize: '11px', color: C.textMuted, fontStyle: 'italic' }, { text: 'This is your bench' }));
+      } else {
+        row.appendChild(mkBtn('Move to Bench ' + myWorkstation, C.accent, '#fff', async () => {
+          searchState.chosen = r;
           await POST('/api/move', { tool: r.tool, from: r.wb.id, to: myWorkstation, count: 1 });
-        } else {
-          await PATCH('/api/workbenches/' + r.wb.id + '/tools/' + encodeURIComponent(r.tool) + '/count', { count: r.info.count - 1 });
-        }
-        await loadWorkbenches();
-        searchState.step = 2;
-        render();
-      }));
+          await loadWorkbenches();
+          searchState.step = 2;
+          render();
+        }));
+      }
     } else {
       row.appendChild(el('span', { fontSize: '12px', color: C.textMuted }, { text: 'Unavailable' }));
     }
@@ -764,9 +833,9 @@ function renderSearchStep2(panel) {
     display: 'flex', flexDirection: 'column', gap: '12px',
   });
   card.appendChild(el('p', { fontSize: '20px', fontWeight: '700', color: C.text }, { text: r.tool }));
-  card.appendChild(el('p', { fontSize: '14px', color: C.textMuted }, { text: 'From Bench ' + r.wb.id }));
+  card.appendChild(el('p', { fontSize: '14px', color: C.textMuted }, { text: 'From Bench ' + r.wb.id + ' \u2192 Bench ' + myWorkstation }));
   card.appendChild(infoBox(
-    'Verify that you are taking "' + r.tool + '" from Bench ' + r.wb.id + '. The move has been recorded in the system.',
+    'Verify that you are taking "' + r.tool + '" from Bench ' + r.wb.id + ' to your bench (Bench ' + myWorkstation + '). The move has been recorded in the system.',
     C.accent
   ));
   panel.appendChild(card);
@@ -775,12 +844,7 @@ function renderSearchStep2(panel) {
     searchState.step = 3; render();
   }));
   btnRow.appendChild(mkBtn('\u2717 Wrong Tool \u2014 Undo', 'outline', C.danger, async () => {
-    // Reverse the move
-    if (myWorkstation) {
-      await POST('/api/move', { tool: r.tool, from: myWorkstation, to: r.wb.id, count: 1 });
-    } else {
-      await PATCH('/api/workbenches/' + r.wb.id + '/tools/' + encodeURIComponent(r.tool) + '/count', { count: r.info.count });
-    }
+    await POST('/api/move', { tool: r.tool, from: myWorkstation, to: r.wb.id, count: 1 });
     await loadWorkbenches();
     searchState.step = 1; searchState.chosen = null;
     buildSearchResults(); render();
