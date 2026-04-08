@@ -37,6 +37,28 @@ function injectGlobalStyles() {
     button { cursor: pointer; font-family: ${FONT}; border: none; outline: none; }
     input, select { font-family: ${FONT}; }
     @keyframes fadeIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:none; } }
+    .ribbon-tab-short { display: none; }
+    .ribbon-tab-sub   { display: block; }
+    .ribbon-bench-label { display: inline; }
+    .ribbon-refresh-text { display: inline; }
+    .ribbon-refresh-icon { display: none; }
+    @media (max-width: 768px) {
+      .ribbon { padding: 0 8px !important; gap: 0 !important; height: 44px !important; }
+      .ribbon-tab-full  { display: none !important; }
+      .ribbon-tab-short { display: inline !important; }
+      .ribbon-tab-sub   { display: none !important; }
+      .ribbon-bench-label { display: none !important; }
+      .ribbon-refresh-text { display: none !important; }
+      .ribbon-refresh-icon { display: inline !important; }
+      .ribbon button, .ribbon select { height: 32px !important; min-width: 0 !important; }
+      .ribbon .ribbon-tab { flex: 1 1 0 !important; padding: 0 6px !important; align-items: center !important; text-align: center !important; }
+      .ribbon .ribbon-ws-select { padding: 3px 6px !important; font-size: 11px !important; }
+      .ribbon .ribbon-log-btn { width: 32px !important; height: 32px !important; margin-left: 4px !important; flex-shrink: 0 !important; }
+      .ribbon .ribbon-refresh-btn { padding: 4px 8px !important; flex-shrink: 0 !important; }
+      .ribbon .ribbon-spacer { display: none !important; }
+      .log-col-from, .log-col-to { display: none !important; }
+      .log-row { grid-template-columns: 120px 1fr 50px 70px !important; }
+    }
   `;
   document.head.appendChild(style);
 }
@@ -145,13 +167,14 @@ function buildRibbon() {
     background: C.surface,
     borderBottom: '2px solid ' + C.border,
     padding: '0 20px', height: '56px',
-    gap: '2px',
+    gap: '2px', overflow: 'hidden',
   });
+  ribbon.className = 'ribbon';
 
   const tabs = [
-    { id: 'dashboard', label: 'Workbench Overview',  sub: 'View tool status for all benches' },
-    { id: 'search',    label: 'Find a Tool',          sub: 'Locate a tool across the lab'    },
-    { id: 'cleanup',   label: 'Cleanup Routine',       sub: 'Step-by-step lab organization'  },
+    { id: 'dashboard', label: 'Workbench Overview',  short: 'Workbenches', sub: 'View tool status for all benches' },
+    { id: 'search',    label: 'Find a Tool',          short: 'Locate',      sub: 'Locate a tool across the lab'    },
+    { id: 'cleanup',   label: 'Cleanup Routine',       short: 'Cleanup',    sub: 'Step-by-step lab organization'  },
   ];
 
   tabs.forEach(tab => {
@@ -165,15 +188,27 @@ function buildRibbon() {
       marginBottom: '-2px',
       transition: 'border-color 0.15s',
     });
+    btn.className = 'ribbon-tab';
 
-    btn.appendChild(el('span', {
+    const fullLabel = el('span', {
       fontSize: '13px', fontWeight: '700',
       color: active ? C.accent : C.text,
-    }, { text: tab.label }));
+    }, { text: tab.label });
+    fullLabel.className = 'ribbon-tab-full';
+    btn.appendChild(fullLabel);
 
-    btn.appendChild(el('span', {
+    const shortLabel = el('span', {
+      fontSize: '13px', fontWeight: '700',
+      color: active ? C.accent : C.text,
+    }, { text: tab.short });
+    shortLabel.className = 'ribbon-tab-short';
+    btn.appendChild(shortLabel);
+
+    const subLabel = el('span', {
       fontSize: '11px', color: C.textMuted,
-    }, { text: tab.sub }));
+    }, { text: tab.sub });
+    subLabel.className = 'ribbon-tab-sub';
+    btn.appendChild(subLabel);
 
     btn.addEventListener('mouseenter', () => {
       if (!active) s(btn, { borderBottomColor: C.borderStrong });
@@ -198,15 +233,19 @@ function buildRibbon() {
   });
 
   const spacer = el('div', { flex: '1' });
+  spacer.className = 'ribbon-spacer';
   ribbon.appendChild(spacer);
 
   // Workstation selector
-  const wsWrap = el('div', { display: 'flex', alignItems: 'center', gap: '8px', alignSelf: 'center', marginRight: '14px' });
-  wsWrap.appendChild(el('span', { fontSize: '11px', fontWeight: '600', color: C.textMuted }, { text: 'My Bench:' }));
+  const wsWrap = el('div', { display: 'flex', alignItems: 'center', gap: '8px', alignSelf: 'center', marginRight: '14px', flexShrink: '0' });
+  const benchLabel = el('span', { fontSize: '11px', fontWeight: '600', color: C.textMuted }, { text: 'My Bench:' });
+  benchLabel.className = 'ribbon-bench-label';
+  wsWrap.appendChild(benchLabel);
   const wsSelect = el('select', {
     padding: '5px 10px', borderRadius: '6px', fontSize: '12px', fontWeight: '600',
     border: '1px solid ' + C.border, background: C.surface, color: C.text,
   });
+  wsSelect.className = 'ribbon-ws-select';
   const noneOpt = el('option', {}, { text: 'None' });
   noneOpt.value = '';
   wsSelect.appendChild(noneOpt);
@@ -229,7 +268,15 @@ function buildRibbon() {
     border: '1px solid ' + C.border,
     background: C.surface, color: C.text,
     fontSize: '12px', fontWeight: '600',
-  }, { text: '\u21bb  Refresh' });
+  });
+  refreshBtn.className = 'ribbon-refresh-btn';
+  const refreshText = el('span', {}, { text: '\u21bb  Refresh' });
+  refreshText.className = 'ribbon-refresh-text';
+  refreshBtn.appendChild(refreshText);
+  // Mobile: show only the icon when text is hidden
+  const refreshIcon = el('span', { display: 'none' }, { text: '\u21bb' });
+  refreshIcon.className = 'ribbon-refresh-icon';
+  refreshBtn.appendChild(refreshIcon);
   refreshBtn.addEventListener('click', async () => {
     s(refreshBtn, { opacity: '0.5', pointerEvents: 'none' });
     await loadWorkbenches();
@@ -248,6 +295,7 @@ function buildRibbon() {
     marginLeft: '8px',
     cursor: 'pointer',
   });
+  logBtn.className = 'ribbon-log-btn';
   logBtn.setAttribute('title', 'Movement Log');
   const logImg = el('img', {
     width: '22px', height: '22px', objectFit: 'contain',
@@ -378,7 +426,7 @@ function buildBenchRow(wb, index) {
   const numWrap = el('div', { display: 'flex', flexDirection: 'column', gap: '2px' });
   numWrap.appendChild(el('span', {
     fontSize: '14px', fontWeight: '700', color: C.text,
-  }, { text: String(wb.id) }));
+  }, { text: 'B' + wb.id }));
   if (wb.inUse) {
     numWrap.appendChild(el('span', {
       fontSize: '9px', fontWeight: '700', color: C.accent, letterSpacing: '0.6px',
@@ -474,7 +522,7 @@ function buildExpandedPanel(wb) {
   panel.appendChild(el('span', {
     fontSize: '10px', fontWeight: '700', color: C.textMuted, letterSpacing: '0.7px',
     paddingBottom: '8px', display: 'block',
-  }, { text: 'MOVE' }));
+  }, { text: "MOVE TOOL FROM:" }));
 
   // One row per tool
   Object.entries(wb.inventory).forEach(([tool, info]) => {
@@ -1111,10 +1159,21 @@ function renderLog(root) {
     alignItems: 'center', padding: '10px 16px',
     background: C.surfaceAlt, borderBottom: '1px solid ' + C.border,
   });
-  ['TIME', 'TOOL', 'FROM', 'TO', 'QTY', 'TYPE'].forEach(label => {
-    colHdr.appendChild(el('span', {
+  colHdr.className = 'log-row';
+  const colLabels = [
+    { text: 'TIME',  cls: '' },
+    { text: 'TOOL',  cls: '' },
+    { text: 'FROM',  cls: 'log-col-from' },
+    { text: 'TO',    cls: 'log-col-to' },
+    { text: 'QTY',   cls: '' },
+    { text: 'TYPE',  cls: '' },
+  ];
+  colLabels.forEach(col => {
+    const span = el('span', {
       fontSize: '10px', fontWeight: '700', color: C.textMuted, letterSpacing: '0.8px',
-    }, { text: label }));
+    }, { text: col.text });
+    if (col.cls) span.className = col.cls;
+    colHdr.appendChild(span);
   });
   table.appendChild(colHdr);
 
@@ -1127,12 +1186,17 @@ function renderLog(root) {
       background: i % 2 === 0 ? C.surface : C.surfaceAlt,
       borderBottom: '1px solid ' + C.border,
     });
+    row.className = 'log-row';
     const dt = entry.time ? new Date(entry.time) : null;
     const timeStr = dt ? dt.toLocaleString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : '\u2014';
     row.appendChild(el('span', { fontSize: '12px', color: C.textMuted }, { text: timeStr }));
     row.appendChild(el('span', { fontSize: '13px', color: C.text }, { text: entry.tool }));
-    row.appendChild(el('span', { fontSize: '13px', fontWeight: '600', color: C.text }, { text: 'B' + entry.from }));
-    row.appendChild(el('span', { fontSize: '13px', fontWeight: '600', color: C.accent }, { text: 'B' + entry.to }));
+    const fromSpan = el('span', { fontSize: '13px', fontWeight: '600', color: C.text }, { text: 'B' + entry.from });
+    fromSpan.className = 'log-col-from';
+    row.appendChild(fromSpan);
+    const toSpan = el('span', { fontSize: '13px', fontWeight: '600', color: C.accent }, { text: 'B' + entry.to });
+    toSpan.className = 'log-col-to';
+    row.appendChild(toSpan);
     row.appendChild(el('span', { fontSize: '13px', color: C.text }, { text: String(entry.count) }));
     const typeColor = entry.type === 'cleanup' ? C.success : C.accent;
     row.appendChild(statusTag(entry.type || 'move', typeColor));
