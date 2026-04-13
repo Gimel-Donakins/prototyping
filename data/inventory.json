@@ -5,7 +5,7 @@
       "inUse": false,
       "inventory": {
         "Multimeter": {
-          "count": 0
+          "count": 1
         },
         "Wire Stripper": {
           "count": 1
@@ -38,7 +38,7 @@
     },
     {
       "id": 2,
-      "inUse": false,
+      "inUse": true,
       "inventory": {
         "Multimeter": {
           "count": 1
@@ -50,7 +50,7 @@
           "count": 1
         },
         "Diagonal Cutters": {
-          "count": 0
+          "count": 1
         },
         "Screwdriver (Flathead)": {
           "count": 1
@@ -110,7 +110,7 @@
     },
     {
       "id": 4,
-      "inUse": true,
+      "inUse": false,
       "inventory": {
         "Multimeter": {
           "count": 1
@@ -146,7 +146,7 @@
     },
     {
       "id": 5,
-      "inUse": true,
+      "inUse": false,
       "inventory": {
         "Multimeter": {
           "count": 1
@@ -194,7 +194,7 @@
           "count": 1
         },
         "Diagonal Cutters": {
-          "count": 2
+          "count": 1
         },
         "Screwdriver (Flathead)": {
           "count": 1
@@ -218,7 +218,7 @@
     },
     {
       "id": 7,
-      "inUse": true,
+      "inUse": false,
       "inventory": {
         "Multimeter": {
           "count": 1
@@ -293,7 +293,7 @@
       "inUse": false,
       "inventory": {
         "Multimeter": {
-          "count": 2
+          "count": 1
         },
         "Wire Stripper": {
           "count": 1
@@ -326,7 +326,7 @@
     },
     {
       "id": 10,
-      "inUse": true,
+      "inUse": false,
       "inventory": {
         "Multimeter": {
           "count": 1
@@ -398,7 +398,7 @@
     },
     {
       "id": 12,
-      "inUse": false,
+      "inUse": true,
       "inventory": {
         "Multimeter": {
           "count": 0

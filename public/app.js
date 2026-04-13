@@ -389,15 +389,43 @@ function renderDashboard(root) {
 function buildDotLegend() {
   const wrap = el('div', { display: 'flex', gap: '24px', flexWrap: 'wrap', alignItems: 'center' });
   [
-    { color: C.dotOk,    label: 'Present',                       filled: true  },
-    { color: C.dotIssue, label: 'Issue — missing or duplicate',  filled: false },
-  ].forEach(({ color, label, filled }) => {
+    { img: 'img/multimeter.png',     label: 'Present' },
+    { img: 'img/multimeter_red.png', label: 'Issue — missing or duplicate' },
+  ].forEach(({ img, label }) => {
     const item = el('div', { display: 'flex', alignItems: 'center', gap: '7px', fontSize: '12px', color: C.textMuted });
-    item.appendChild(makeDot(color, filled));
+    const icon = el('img', { width: '22px', height: '22px', objectFit: 'contain' });
+    icon.setAttribute('src', img);
+    icon.setAttribute('alt', label);
+    item.appendChild(icon);
     item.appendChild(el('span', {}, { text: label }));
     wrap.appendChild(item);
   });
   return wrap;
+}
+
+// ─── Tool name → image filename mapping ─────────────────────────────────────
+const TOOL_IMG = {
+  'Multimeter':             'multimeter',
+  'Wire Stripper':          'wire_strippers',
+  'Needle-Nose Pliers':     'needle-nose_pliers',
+  'Diagonal Cutters':       'diagonal_cutters',
+  'Screwdriver (Flathead)': 'flathead_screwdriver',
+  'Screwdriver (Phillips)': 'phillips-head_screwdriver',
+  'Breadboard':             'breadboard',
+  'Jumper Wires':           'jumper_wires',
+  'Soldering Iron':         'soldering_iron',
+  'Helping Hands':          'helping_hands',
+};
+
+function makeToolIcon(tool, missing) {
+  const base = TOOL_IMG[tool];
+  const src = base ? 'img/' + base + (missing ? '_red' : '') + '.png' : '';
+  const img = el('img', {
+    width: '22px', height: '22px', objectFit: 'contain', flexShrink: '0',
+  });
+  img.setAttribute('src', src);
+  img.setAttribute('alt', tool);
+  return img;
 }
 
 function makeDot(color, filled) {
@@ -434,17 +462,17 @@ function buildBenchRow(wb, index) {
   }
   row.appendChild(numWrap);
 
-  // Col 2: Tool dots
+  // Col 2: Tool icons
   const dotsWrap = el('div', { display: 'flex', flexWrap: 'wrap', gap: '5px', alignItems: 'center' });
   Object.entries(wb.inventory).forEach(([tool, info]) => {
     const hasIssue = info.count === 0 || info.count > 1;
-    const dot = makeDot(hasIssue ? C.dotIssue : C.dotOk, !hasIssue);
-    dot.setAttribute('title', tool + ': ' + (
+    const icon = makeToolIcon(tool, hasIssue);
+    icon.setAttribute('title', tool + ': ' + (
       info.count === 0 ? 'Missing' :
       info.count > 1   ? '\u00d7' + info.count + ' (duplicate)' : 'Present'
     ));
-    s(dot, { cursor: 'default' });
-    dotsWrap.appendChild(dot);
+    s(icon, { cursor: 'default' });
+    dotsWrap.appendChild(icon);
   });
   row.appendChild(dotsWrap);
 
